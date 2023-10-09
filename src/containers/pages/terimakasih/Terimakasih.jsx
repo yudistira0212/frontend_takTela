@@ -94,7 +94,9 @@ const Terimakasih = () => {
                   <div className=" ">Alamat : {dataRiwayat.alamat}</div>
                   <div>
                     Status :{" "}
-                    {dataRiwayat.flag ? "Dalam proses" : "Sudah di terima"}
+                    {dataRiwayat.statusPembayaran
+                      ? "Dalam proses"
+                      : "Belum Lunas"}
                   </div>
                   <div>
                     Total Harga : {formatToIDR(dataRiwayat.totalHarga)}{" "}
