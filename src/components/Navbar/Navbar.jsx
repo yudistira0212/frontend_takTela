@@ -94,7 +94,7 @@ const Navbar = (porps) => {
                 onClick={() => {
                   const openWhatsApp = () => {
                     const message = `Halo min Saya tertarik degan produk anda,\nEmail: ${email}`;
-                    const phoneNumber = "+6282113066012";
+                    const phoneNumber = "+6282239088465";
                     const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                       message
                     )}`;
