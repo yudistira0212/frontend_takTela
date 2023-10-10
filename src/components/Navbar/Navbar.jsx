@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import "./Navbar.css";
 import { getDatabase, onValue, ref } from "firebase/database";
@@ -7,6 +7,7 @@ import { getDatabase, onValue, ref } from "firebase/database";
 const Navbar = (porps) => {
   const [admin, setAdmin] = useState();
   const [email, setEmail] = useState();
+  const [userName, setUserName] = useState();
 
   const database = getDatabase();
 
@@ -18,6 +19,7 @@ const Navbar = (porps) => {
     signOut(auth)
       .then(() => {
         setIsLogin(false);
+
         navigate("/");
       })
       .catch((error) => {
@@ -30,6 +32,7 @@ const Navbar = (porps) => {
       if (user) {
         setIsLogin(true);
         setEmail(user.email);
+        setUserName(user.displayName);
         fetchData(user.uid);
       }
     });
@@ -89,12 +92,12 @@ const Navbar = (porps) => {
               </NavLink>
             </li>
             <li className="nav-item">
-              <button
-                className=" nav-link  btn mx-2 btn-light"
+              <Link
+                className="nav-link  btn mx-2 btn-light"
                 onClick={() => {
                   const openWhatsApp = () => {
-                    const message = `Halo min Saya tertarik degan produk anda,\nEmail: ${email}`;
-                    const phoneNumber = "+6282239088465";
+                    const message = `Halo min Saya ${userName} ingin bertanya terkait produk anda,`;
+                    const phoneNumber = "+6282248250159";
                     const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                       message
                     )}`;
@@ -102,9 +105,12 @@ const Navbar = (porps) => {
                   };
                   openWhatsApp();
                 }}
+                // onClick={}
+
+                exact
               >
                 Contact admin
-              </button>
+              </Link>
             </li>
             {admin === "admin" && (
               <li className="nav-item">

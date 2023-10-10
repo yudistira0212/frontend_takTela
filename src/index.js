@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./containers/pages/App/App";
 import reportWebVitals from "./reportWebVitals";
 import "./config/firebase";
+import "react-toastify/dist/ReactToastify.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -70,71 +70,92 @@ const Home = () => {
           <Navbar namaNav="Home" />
 
           <div className="container pt-5 pb-5 " style={{ maxWidth: "500px" }}>
-            {dataMenu.map((data, index) => (
-              <div
-                key={data.id}
-                className="d-flex my-3  align-items-center bg-body-tertiary container shadow-sm rounded-3 p-2"
-              >
-                <img
-                  src={data.imageUrl}
-                  alt="gambar product"
-                  width={100}
-                  height={100}
-                  style={{ objectFit: "cover" }}
-                  className="rounded-3"
-                />
-                <div className="ms-3">
-                  <div>Stok : {data.stok}</div>
+            {dataMenu.length !== 0 &&
+              dataMenu.map((data, index) => (
+                <div
+                  key={data.id}
+                  className="d-flex my-3   align-items-center bg-body-tertiary container shadow-sm rounded-3 p-2"
+                >
+                  <img
+                    src={data.imageUrl}
+                    alt="gambar product"
+                    width={100}
+                    height={100}
+                    style={{ objectFit: "cover" }}
+                    className="rounded-3"
+                  />
+                  <div className="ms-3">
+                    <div className="d-flex">
+                      <div className=" fw-bold">
+                        <div>Stok </div>
+                        <div>Nama </div>
+                        <div>Variant </div>
+                        <div>Harga </div>
+                      </div>
+                      <div className="mx-1  fw-bold">
+                        <div> : </div>
+                        <div> : </div>
+                        <div> : </div>
+                        <div> : </div>
+                      </div>
+                      <div>
+                        <div>{data.stok}</div>
+                        <div>{data.nama}</div>
+                        <div>{data.variant}</div>
+                        <div>{formatToIDR(data.harga)}</div>
+                      </div>
+                    </div>
+                    {/* <div>Stok : {data.stok}</div>
                   <div>{data.nama}</div>
                   <div>{data.variant}</div>
-                  <div>{formatToIDR(data.harga)}</div>
-                </div>
-                <div className="ms-auto d-flex flex-column">
-                  <button
-                    className="btn btn-primary btn-sm"
-                    style={{ width: "40px" }}
-                    onClick={() => {
-                      const newDataMenu = [...dataMenu];
-                      if (data.stok > banyakPesan[index].pesanan) {
-                        newDataMenu[index].pesanan++;
-                        setBanyakPesan(newDataMenu);
-                      }
-                    }}
-                    disabled={data.stok <= banyakPesan[index].pesanan}
-                  >
-                    +
-                  </button>
-                  <input
-                    value={banyakPesan[index].pesanan}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value, 10) || 0;
-                      if (newValue >= 0 && newValue <= data.stok) {
+                  <div>{formatToIDR(data.harga)}</div> */}
+                  </div>
+                  <div className="ms-auto d-flex flex-column">
+                    <button
+                      className="btn btn-primary btn-sm"
+                      style={{ width: "40px" }}
+                      onClick={() => {
                         const newDataMenu = [...dataMenu];
-                        newDataMenu[index].pesanan = newValue;
-                        setBanyakPesan(newDataMenu);
-                      }
-                    }}
-                    type="number"
-                    style={{ width: "40px" }}
-                    className="text-center"
-                  />
-                  <button
-                    className="btn btn-primary btn-sm"
-                    style={{ width: "40px" }}
-                    onClick={() => {
-                      if (banyakPesan[index].pesanan > 0) {
-                        const newDataMenu = [...dataMenu];
-                        newDataMenu[index].pesanan--;
-                        setBanyakPesan(newDataMenu);
-                      }
-                    }}
-                    disabled={banyakPesan[index].pesanan <= 0}
-                  >
-                    -
-                  </button>
+                        if (data.stok > banyakPesan[index].pesanan) {
+                          newDataMenu[index].pesanan++;
+                          setBanyakPesan(newDataMenu);
+                        }
+                      }}
+                      disabled={data.stok <= banyakPesan[index].pesanan}
+                    >
+                      +
+                    </button>
+                    <input
+                      value={banyakPesan[index].pesanan}
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value, 10) || 0;
+                        if (newValue >= 0 && newValue <= data.stok) {
+                          const newDataMenu = [...dataMenu];
+                          newDataMenu[index].pesanan = newValue;
+                          setBanyakPesan(newDataMenu);
+                        }
+                      }}
+                      type="number"
+                      style={{ width: "40px" }}
+                      className="text-center"
+                    />
+                    <button
+                      className="btn btn-primary btn-sm"
+                      style={{ width: "40px" }}
+                      onClick={() => {
+                        if (banyakPesan[index].pesanan > 0) {
+                          const newDataMenu = [...dataMenu];
+                          newDataMenu[index].pesanan--;
+                          setBanyakPesan(newDataMenu);
+                        }
+                      }}
+                      disabled={banyakPesan[index].pesanan <= 0}
+                    >
+                      -
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
           <div
             className=" position-fixed bg-white border-top  container-fluid"
@@ -144,7 +165,7 @@ const Home = () => {
               className=" justify-content-between d-flex   container-xxl"
               style={{ maxWidth: "500px" }}
             >
-              <div>
+              <div className=" fw-bold">
                 <div>Total Harga Belanja :</div>
                 <div>{totalPesana ? formatToIDR(totalPesana) : "Rp 0"}</div>
               </div>
