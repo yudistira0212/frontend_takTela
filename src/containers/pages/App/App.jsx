@@ -11,10 +11,12 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Terimakasih from "../terimakasih/Terimakasih";
 import RiwayatPembelianUser from "../RiwayatPembelianUser/RiwayatPembelianUser";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <Router>
+      <ToastContainer />
       <Routes>
         <Route path="/" Component={Home} />
         <Route path="/riwayat" Component={RiwayatPembelianUser} />

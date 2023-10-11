@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Dashboard from "../Dashboard";
 import { getDatabase, onValue, ref, set } from "firebase/database";
+import CopyToClipboard from "react-copy-to-clipboard";
+import { toast } from "react-toastify";
+import { BiSolidCopyAlt } from "react-icons/bi";
 
 const ListPemesan = () => {
   const [dataRiwayat, setDataRiwayat] = useState([]);
@@ -8,8 +11,19 @@ const ListPemesan = () => {
   const [statusPembayaran, setStatusPembayaran] = useState(false);
   const [sudahSampai, setSudahSampai] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [sortColumn, setSortColumn] = useState("waktuPesan");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const database = getDatabase();
+
+  const handleSort = (column) => {
+    if (column === sortColumn) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortOrder("asc");
+    }
+  };
 
   const handleConfirm = (id, status) => {
     let updatedStatusPembayaran = 0;
@@ -18,7 +32,7 @@ const ListPemesan = () => {
     const bayarRef = ref(database, `Riwayat Pesanan/${id}/statusPembayaran`);
     const flagRef = ref(database, `Riwayat Pesanan/${id}/flag`);
 
-    if (statusPembayaran === true || sudahSampai === true) {
+    if (statusPembayaran === true) {
       updatedStatusPembayaran = status === 0 ? 1 : 0;
       set(bayarRef, updatedStatusPembayaran)
         .then(() => {
@@ -58,7 +72,17 @@ const ListPemesan = () => {
               ...value,
             }));
 
-          setDataRiwayat(filteredData);
+          const sortedData = filteredData.sort((a, b) => {
+            const dateA = new Date(a[sortColumn]);
+            const dateB = new Date(b[sortColumn]);
+
+            if (sortOrder === "asc") {
+              return dateA - dateB;
+            } else {
+              return dateB - dateA;
+            }
+          });
+          setDataRiwayat(sortedData);
         } else {
           console.log("Data tidak ditemukan.");
         }
@@ -105,7 +129,19 @@ const ListPemesan = () => {
             <tr>
               <th scope="col">No</th>
               <th scope="col">Email</th>
-              <th scope="col">Waktu</th>
+              <th
+                scope="col"
+                onClick={() => handleSort("waktuPesan")}
+                style={{ cursor: "pointer" }}
+              >
+                Waktu
+                {sortColumn === "waktuPesan" && (
+                  <span className="ml-2">
+                    {sortOrder === "asc" ? "↑" : "↓"}
+                  </span>
+                )}
+              </th>
+              {/* ... Sisipkan header untuk kolom lain jika diperlukan */}
               <th scope="col">KodePembeli</th>
               <th scope="col">Alamat</th>
               <th scope="col">Telpon</th>
@@ -188,7 +224,7 @@ const ListPemesan = () => {
                             <div className="modal-body">
                               <div class="form-check">
                                 <input
-                                  class="form-check-input"
+                                  className="form-check-input"
                                   type="checkbox"
                                   checked={statusPembayaran}
                                   disabled={sudahSampai === true}
@@ -198,7 +234,7 @@ const ListPemesan = () => {
                                   id={`pembayaran${data.id}`}
                                 />
                                 <label
-                                  class="form-check-label"
+                                  className="form-check-label"
                                   for={`pembayaran${data.id}`}
                                 >
                                   Mengubah Status Pembayaran "
@@ -208,19 +244,21 @@ const ListPemesan = () => {
                                   "
                                 </label>
                               </div>
-                              <div class="form-check">
+                              <div className="form-check">
                                 <input
-                                  class="form-check-input"
+                                  className="form-check-input"
                                   type="checkbox"
                                   checked={sudahSampai}
                                   onChange={(e) => {
+                                    if (data.statusPembayaran === 0) {
+                                      setStatusPembayaran(e.target.checked);
+                                    }
                                     setSudahSampai(e.target.checked);
-                                    setStatusPembayaran(e.target.checked);
                                   }}
                                   id={`sudahsampai${data.id}`}
                                 />
                                 <label
-                                  class="form-check-label"
+                                  className="form-check-label"
                                   for={`sudahsampai${data.id}`}
                                 >
                                   Pesanan Sudah Sampai
@@ -228,14 +266,14 @@ const ListPemesan = () => {
                               </div>
                               <div>
                                 <label
-                                  class="form-check-label"
+                                  className="form-check-label"
                                   for="flexSwitchCheckChecked"
                                   style={{ fontWeight: "bold" }}
                                 >
                                   Ketik "konfirmasi"
                                 </label>
                                 <input
-                                  class=" form-control "
+                                  className=" form-control "
                                   type="text"
                                   placeholder='"konfirmasi"'
                                   value={konfir}
@@ -271,6 +309,153 @@ const ListPemesan = () => {
                                 }}
                               >
                                 Save changes
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <button
+                        className="btn btn-info"
+                        data-bs-toggle="modal"
+                        data-bs-target={`#detail${data.id}`}
+                      >
+                        Detail
+                      </button>
+                      <div
+                        className="modal fade"
+                        id={`detail${data.id}`}
+                        tabindex="-1"
+                        aria-labelledby="exampleModalLabel"
+                        aria-hidden="true"
+                      >
+                        <div className="modal-dialog modal-dialog-centered">
+                          <div className="modal-content">
+                            <div className="modal-header">
+                              <h1
+                                className="modal-title fs-5"
+                                id={`konfir${data.id}`}
+                              >
+                                Detail Pesanan
+                              </h1>
+                              <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div className="modal-body">
+                              <div
+                                className="container  my-3 p-2 shadow-sm rounded-3 bg-body-tertiary"
+                                style={{ maxWidth: "500px" }}
+                              >
+                                <div className="d-flex">
+                                  <div className=" fw-bold">
+                                    <div>Tanggal</div>
+                                    <div>Jam</div>
+                                    <div>Kode Pembelian </div>
+                                  </div>
+                                  <div className="fw-bold mx-1">
+                                    <div>:</div>
+                                    <div>:</div>
+                                    <div>:</div>
+                                  </div>
+                                  <div>
+                                    <div>{formatTanggal(data.waktuPesan)}</div>
+                                    <div>{formatJam(data.waktuPesan)}</div>
+                                    <div>
+                                      {" "}
+                                      {data.code}{" "}
+                                      <CopyToClipboard
+                                        text={data.code}
+                                        onCopy={() => {
+                                          toast.success("Terkopi!", {
+                                            position: toast.POSITION.TOP_RIGHT,
+                                            autoClose: 2000,
+                                          });
+                                        }}
+                                      >
+                                        <button className=" btn btn-light">
+                                          <BiSolidCopyAlt />
+                                        </button>
+                                      </CopyToClipboard>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="border-top">
+                                  {data.pesanan.map((value) => (
+                                    <div key={value.id} className="my-2">
+                                      <div>
+                                        {value.nama} {value.variant}
+                                      </div>
+                                      <div className="d-flex justify-content-between  container-fluid">
+                                        <div>
+                                          {value.pesanan} X{" "}
+                                          {formatToIDR(value.harga)}
+                                        </div>
+                                        <div>
+                                          {" "}
+                                          {formatToIDR(value.totalHargaPesanan)}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="border-top ">
+                                  <div className="d-flex">
+                                    <div className="fw-bold">
+                                      <div> Alamat </div>
+                                      <div> Total </div>
+                                      <div> Status </div>
+                                    </div>
+                                    <div className="fw-bold mx-1">
+                                      <div>:</div>
+                                      <div>:</div>
+                                      <div>:</div>
+                                    </div>
+                                    <div className="">
+                                      <div>{data.alamat}</div>
+                                      <div>
+                                        {" "}
+                                        {formatToIDR(data.totalHarga)}{" "}
+                                      </div>
+
+                                      {data.flag === 0 ? (
+                                        data.statusPembayaran ? (
+                                          <div className="text-success">
+                                            Dalam Proses
+                                          </div>
+                                        ) : (
+                                          <div className="text-danger">
+                                            Belum Lunas
+                                          </div>
+                                        )
+                                      ) : (
+                                        <div className="text-primary">
+                                          Telah diterima
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    Total Harga : {formatToIDR(data.totalHarga)}{" "}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="modal-footer">
+                              <button
+                                type="button"
+                                className="btn btn-primary"
+                                data-bs-dismiss="modal"
+                                // onClick={() =>
+                                // handleDelete(data.id, data.namaImage)
+                                // }
+                              >
+                                Oke
                               </button>
                             </div>
                           </div>

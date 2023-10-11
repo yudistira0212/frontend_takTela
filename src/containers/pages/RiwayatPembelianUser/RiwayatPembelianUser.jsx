@@ -5,7 +5,7 @@ import { getDatabase, onValue, ref, remove } from "firebase/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { BiSolidCopyAlt } from "react-icons/bi";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const RiwayatPembelianUser = () => {
   const [dataRiwayat, setDataRiwayat] = useState([]);
@@ -170,7 +170,6 @@ const RiwayatPembelianUser = () => {
                               <BiSolidCopyAlt />
                             </button>
                           </CopyToClipboard>
-                          <ToastContainer />
                         </div>
                       </div>
                     </div>

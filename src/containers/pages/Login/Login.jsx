@@ -4,6 +4,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import NoTokenAccess from "../../../components/molecules/NoTokenAccess";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,10 +18,12 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Login berhasil, Anda dapat mengarahkan pengguna ke halaman lain atau menampilkan pesan berhasil.
+      // Login berhasil, tampilkan notifikasi toastify sukses.
+      toast.success("Login berhasil");
     } catch (error) {
       setError(error.message);
-      // Login gagal, tampilkan pesan kesalahan kepada pengguna.
+      // Login gagal, tampilkan notifikasi toastify gagal.
+      toast.error("Login gagal");
     }
   };
 

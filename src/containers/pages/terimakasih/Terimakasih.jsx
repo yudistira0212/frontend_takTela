@@ -4,7 +4,7 @@ import Navbar from "../../../components/Navbar/Navbar";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getDatabase, onValue, ref, remove } from "firebase/database";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { BiSolidCopyAlt } from "react-icons/bi";
 
 const Terimakasih = () => {
@@ -115,7 +115,6 @@ const Terimakasih = () => {
                           <BiSolidCopyAlt />
                         </button>
                       </CopyToClipboard>
-                      <ToastContainer />
                     </div>
                   </div>
                 </div>

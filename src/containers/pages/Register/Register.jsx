@@ -8,6 +8,7 @@ import { getDatabase, ref, set } from "firebase/database";
 import { Link } from "react-router-dom";
 import NoTokenAccess from "../../../components/molecules/NoTokenAccess";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +22,16 @@ const Register = () => {
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError("Password dan konfirmasi password harus sama.");
+      toast.error("Password dan konfirmasi password harus sama.");
+      return;
+    }
+
+    // Validasi password
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Password harus mengandung huruf dan angka, minimal 8 karakter."
+      );
       return;
     }
 
@@ -37,6 +47,7 @@ const Register = () => {
       await updateProfile(user, {
         displayName: username,
       });
+
       // Simpan data tambahan (username dan nomor HP) ke database
       const db = getDatabase();
       const userRef = ref(db, `users/${user.uid}`);
@@ -46,9 +57,11 @@ const Register = () => {
       await set(userRef, userData);
 
       console.log("Registrasi berhasil:", user);
+      toast.success("Registrasi berhasil");
     } catch (error) {
       setError(error.message);
       console.error("Registrasi gagal:", error);
+      toast.error("Registrasi gagal");
     }
   };
 
