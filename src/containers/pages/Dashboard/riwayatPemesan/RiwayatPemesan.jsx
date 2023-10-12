@@ -115,7 +115,6 @@ const RiwayatPemesan = () => {
               <th scope="col">Telpon</th>
               <th scope="col">Total Harga</th>
               <th scope="col">Status</th>
-              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -149,139 +148,10 @@ const RiwayatPemesan = () => {
                   <td>{data.alamat}</td>
                   <td>{data.noHp}</td>
                   <td>{formatToIDR(data.totalHarga)}</td>
-                  <td
-                    className={
-                      data.statusPembayaran ? "bg-success" : "bg-danger"
-                    }
-                  >
-                    {data.statusPembayaran ? "Lunas" : "Belum Lunas"}
+                  <td className={data.statusPembayaran === 2 && "bg-success"}>
+                    {data.statusPembayaran === 2 && "Lunas"}
                   </td>
-                  <td>
-                    <div>
-                      <button
-                        type="button"
-                        class="btn btn-info"
-                        data-bs-toggle="modal"
-                        data-bs-target={`#${data.id}`}
-                      >
-                        edit
-                      </button>
-                      <div
-                        className="modal fade"
-                        id={data.id}
-                        tabindex="-1"
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div className="modal-dialog">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h1
-                                className="modal-title fs-5"
-                                id={`modal${data.id}`}
-                              >
-                                Edit Riwayat
-                              </h1>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div className="modal-body">
-                              <div class="form-check">
-                                <input
-                                  class="form-check-input"
-                                  type="checkbox"
-                                  checked={statusPembayaran}
-                                  disabled={sudahSampai === true}
-                                  onChange={(e) => {
-                                    setStatusPembayaran(e.target.checked);
-                                  }}
-                                  id={`pembayaran${data.id}`}
-                                />
-                                <label
-                                  class="form-check-label"
-                                  for={`pembayaran${data.id}`}
-                                >
-                                  Mengubah Status Pembayaran "
-                                  {data.statusPembayaran
-                                    ? "Belum Lunas"
-                                    : "Lunas"}
-                                  "
-                                </label>
-                              </div>
-                              <div class="form-check">
-                                <input
-                                  class="form-check-input"
-                                  type="checkbox"
-                                  checked={sudahSampai}
-                                  onChange={(e) => {
-                                    setSudahSampai(e.target.checked);
-                                    setStatusPembayaran(e.target.checked);
-                                  }}
-                                  id={`sudahsampai${data.id}`}
-                                />
-                                <label
-                                  class="form-check-label"
-                                  for={`sudahsampai${data.id}`}
-                                >
-                                  Pesanan Sudah Sampai
-                                </label>
-                              </div>
-                              <div>
-                                <label
-                                  class="form-check-label"
-                                  for="flexSwitchCheckChecked"
-                                  style={{ fontWeight: "bold" }}
-                                >
-                                  Ketik "konfirmasi"
-                                </label>
-                                <input
-                                  class=" form-control "
-                                  type="text"
-                                  placeholder='"konfirmasi"'
-                                  value={konfir}
-                                  id={`konfirmasi${data.id}`}
-                                  onChange={(e) => {
-                                    setKonfir(e.target.value);
-                                  }}
-                                />
-                              </div>
-                            </div>
-                            <div className="modal-footer">
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                Close
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                onClick={() => {
-                                  if (konfir === "konfirmasi") {
-                                    handleConfirm(
-                                      data.id,
-                                      data.statusPembayaran
-                                    );
-                                    setKonfir("");
-                                    setStatusPembayaran(false);
-                                    setSudahSampai(false);
-                                  }
-                                }}
-                              >
-                                Save changes
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
+                  <td></td>
                 </tr>
               ))}
           </tbody>

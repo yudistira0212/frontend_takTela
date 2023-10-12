@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import "./Navbar.css";
 import { getDatabase, onValue, ref } from "firebase/database";
+import { TbLogout } from "react-icons//tb";
 
 const Navbar = (porps) => {
   const [admin, setAdmin] = useState();
@@ -61,9 +62,8 @@ const Navbar = (porps) => {
       style={{ top: 0, zIndex: 1, width: "100%" }}
     >
       <div className="container">
-        <NavLink className="navbar-brand" exact>
-          {porps.namaNav}
-        </NavLink>
+        <NavLink className="navbar-brand">{porps.namaNav}</NavLink>
+
         <button
           className="navbar-toggler"
           type="button"
@@ -105,8 +105,6 @@ const Navbar = (porps) => {
                   };
                   openWhatsApp();
                 }}
-                // onClick={}
-
                 exact
               >
                 Contact admin
@@ -124,16 +122,18 @@ const Navbar = (porps) => {
               </li>
             )}
           </ul>
-
-          {isLogin ? (
-            <button className="btn btn-danger" onClick={logOut}>
-              Log Out
-            </button>
-          ) : (
-            <NavLink to="/login" className="btn btn-outline-success">
-              Login
-            </NavLink>
-          )}
+          <div className=" d-flex justify-content-center  align-items-center gap-3 ">
+            <div>{userName}</div>
+            {isLogin ? (
+              <button className="btn btn-light" onClick={logOut}>
+                Log Out <TbLogout />
+              </button>
+            ) : (
+              <NavLink to="/login" className="btn btn-outline-light">
+                Login
+              </NavLink>
+            )}
+          </div>
         </div>
       </div>
     </nav>

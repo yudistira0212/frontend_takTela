@@ -18,11 +18,11 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Login berhasil, tampilkan notifikasi toastify sukses.
+
       toast.success("Login berhasil");
     } catch (error) {
       setError(error.message);
-      // Login gagal, tampilkan notifikasi toastify gagal.
+
       toast.error("Login gagal");
     }
   };

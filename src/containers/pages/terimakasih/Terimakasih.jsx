@@ -148,16 +148,7 @@ const Terimakasih = () => {
                     <div className="">
                       <div>{dataRiwayat.alamat}</div>
                       <div> {formatToIDR(dataRiwayat.totalHarga)} </div>
-
-                      {dataRiwayat.flag === 0 ? (
-                        dataRiwayat.statusPembayaran ? (
-                          <div className="text-success">Dalam Proses</div>
-                        ) : (
-                          <div className="text-danger">Belum Lunas</div>
-                        )
-                      ) : (
-                        <div className="text-primary">Telah diterima</div>
-                      )}
+                      <div className="text-danger">Belum Lunas</div>
                     </div>
                   </div>
 

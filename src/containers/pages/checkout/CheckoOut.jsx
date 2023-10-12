@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../../components/Navbar/Navbar";
-import {
-  get,
-  getDatabase,
-  onValue,
-  push,
-  ref,
-  update,
-} from "firebase/database";
+import { get, getDatabase, push, ref, update } from "firebase/database";
 import Protected from "../../../components/molecules/Protected";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
@@ -77,8 +70,8 @@ const CheckOut = (props) => {
         console.error("Data Checkout tidak boleh kosong.");
         return;
       }
-      if (noHp.length !== 12) {
-        console.error("nomor HP tidak boleh kosong");
+      if (noHp.length !== 14) {
+        console.error("nomor HP Tidak valid");
         return;
       }
       if (!alamat) {
@@ -224,15 +217,26 @@ const CheckOut = (props) => {
                 <label className=" form-label ">No Hp</label>
                 <input
                   className={`form-control ${
-                    noHp.length !== 12 && "is-invalid"
+                    noHp.length !== 14 && "is-invalid"
                   }`}
-                  aria-label="With textarea"
-                  type="number"
+                  placeholder="Contoh: 1234 4568 9101"
+                  type="text"
                   value={noHp}
                   onChange={(e) => {
-                    setNoHp(e.target.value);
-                    if (noHp.length <= 12) {
-                    }
+                    const inputValue = e.target.value;
+                    // Hilangkan semua karakter selain angka
+                    const numericValue = inputValue.replace(/\D/g, "");
+
+                    // Batasi panjang maksimal menjadi 12 digit
+                    const truncatedValue = numericValue.slice(0, 12);
+
+                    // Format dengan tanda spasi setiap empat angka
+                    const formattedValue = truncatedValue.replace(
+                      /\d{4}(?=\d)/g,
+                      "$& "
+                    );
+
+                    setNoHp(formattedValue);
                   }}
                 />
               </div>
@@ -242,6 +246,7 @@ const CheckOut = (props) => {
                   className={`form-control ${
                     alamat.length === 0 && "is-invalid"
                   }`}
+                  placeholder="Nama Tempat, Nama Jalan, Rincian Lebih Lanjut"
                   aria-label="With textarea"
                   type="text"
                   value={alamat}

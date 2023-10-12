@@ -129,7 +129,7 @@ const RiwayatPembelianUser = () => {
                   } else if (filter === "1") {
                     return item.flag === 0 && item.statusPembayaran === 0;
                   } else if (filter === "2") {
-                    return item.flag === 0 && item.statusPembayaran === 1;
+                    return item.flag === 0 && item.statusPembayaran >= 1;
                   } else {
                     return item.flag === 1 && item.statusPembayaran === 1;
                   }

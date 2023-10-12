@@ -4,15 +4,18 @@ import { getDatabase, onValue, ref, set } from "firebase/database";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
 import { BiSolidCopyAlt } from "react-icons/bi";
+import { BsArrowUp, BsArrowDown } from "react-icons/bs";
 
 const ListPemesan = () => {
   const [dataRiwayat, setDataRiwayat] = useState([]);
   const [konfir, setKonfir] = useState("");
   const [statusPembayaran, setStatusPembayaran] = useState(false);
   const [sudahSampai, setSudahSampai] = useState(false);
+  const [cod, setCod] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortColumn, setSortColumn] = useState("waktuPesan");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [filter, setFilter] = useState("");
 
   const database = getDatabase();
 
@@ -32,8 +35,24 @@ const ListPemesan = () => {
     const bayarRef = ref(database, `Riwayat Pesanan/${id}/statusPembayaran`);
     const flagRef = ref(database, `Riwayat Pesanan/${id}/flag`);
 
+    if (cod === true) {
+      updatedStatusPembayaran = 1;
+      set(bayarRef, updatedStatusPembayaran)
+        .then(() => {
+          console.log("Status pembayaran diperbarui.");
+        })
+        .catch((error) => {
+          console.error("Gagal memperbarui status pembayaran:", error);
+        });
+    }
+
     if (statusPembayaran === true) {
-      updatedStatusPembayaran = status === 0 ? 1 : 0;
+      if (status === 0) {
+        updatedStatusPembayaran = 2;
+      } else {
+        updatedStatusPembayaran = status === 1 ? 2 : 1;
+      }
+
       set(bayarRef, updatedStatusPembayaran)
         .then(() => {
           console.log("Status pembayaran diperbarui.");
@@ -66,23 +85,13 @@ const ListPemesan = () => {
         if (snapshot.exists()) {
           const data = snapshot.val();
           const filteredData = Object.entries(data)
-            .filter(([id, value]) => value.flag === 0) // Filter hanya data dengan flag === 0
+            .filter(([id, value]) => value.flag === 0)
             .map(([id, value]) => ({
               id,
               ...value,
             }));
 
-          const sortedData = filteredData.sort((a, b) => {
-            const dateA = new Date(a[sortColumn]);
-            const dateB = new Date(b[sortColumn]);
-
-            if (sortOrder === "asc") {
-              return dateA - dateB;
-            } else {
-              return dateB - dateA;
-            }
-          });
-          setDataRiwayat(sortedData);
+          setDataRiwayat(filteredData);
         } else {
           console.log("Data tidak ditemukan.");
         }
@@ -111,19 +120,43 @@ const ListPemesan = () => {
     }).format(number);
   }
 
+  // const sortedData = filteredData.sort((a, b) => {
+  //   const dateA = new Date(a[sortColumn]);
+  //   const dateB = new Date(b[sortColumn]);
+
+  //   if (sortOrder === "asc") {
+  //     return dateA - dateB;
+  //   } else {
+  //     return dateB - dateA;
+  //   }
+  // });
+
   return (
     <Dashboard>
       <div>
-        <div className="my-3 ">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Cari..."
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-          />
+        <div className="my-3 d-flex gap-2 ">
+          <div>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Cari..."
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+          </div>
+          <select
+            className="form-select "
+            aria-label="Default select example"
+            value={filter} // Menghubungkan nilai dengan state
+            onChange={(e) => setFilter(e.target.value)} // Menyambungkan event handler
+          >
+            <option value="">Tampilkan Semua</option>
+            <option value="1">Proses Pesanan</option>
+            <option value="2">Belum Konfimrasi</option>
+            <option value="3">COD</option>
+            <option value="4">Lunas</option>
+          </select>
         </div>
-
         <table className="table">
           <thead>
             <tr>
@@ -137,7 +170,7 @@ const ListPemesan = () => {
                 Waktu
                 {sortColumn === "waktuPesan" && (
                   <span className="ml-2">
-                    {sortOrder === "asc" ? "↑" : "↓"}
+                    {sortOrder === "asc" ? <BsArrowUp /> : <BsArrowDown />}
                   </span>
                 )}
               </th>
@@ -152,8 +185,30 @@ const ListPemesan = () => {
           </thead>
           <tbody>
             {dataRiwayat
+              .sort((a, b) => {
+                const dateA = new Date(a[sortColumn]);
+                const dateB = new Date(b[sortColumn]);
+
+                if (sortOrder === "asc") {
+                  return dateA - dateB;
+                } else {
+                  return dateB - dateA;
+                }
+              })
               .filter((data) => {
-                // Filter data berdasarkan kata kunci pencarian
+                if (filter === "") {
+                  return true;
+                } else if (filter === "1") {
+                  return data.statusPembayaran >= 1;
+                } else if (filter === "2") {
+                  return data.statusPembayaran === 0;
+                } else if (filter === "3") {
+                  return data.statusPembayaran === 1;
+                } else {
+                  return data.statusPembayaran === 2;
+                }
+              })
+              .filter((data) => {
                 const lowerCaseKeyword = searchKeyword.toLowerCase();
                 return (
                   data.email.toLowerCase().includes(lowerCaseKeyword) ||
@@ -183,13 +238,18 @@ const ListPemesan = () => {
                   <td>{formatToIDR(data.totalHarga)}</td>
                   <td
                     className={
-                      data.statusPembayaran ? "bg-success" : "bg-danger"
+                      (data.statusPembayaran === 0 && "bg-danger fw-bold") ||
+                      (data.statusPembayaran === 1 &&
+                        " bg-secondary fw-bold") ||
+                      (data.statusPembayaran === 2 && "bg-success fw-bold")
                     }
                   >
-                    {data.statusPembayaran ? "Lunas" : "Belum Lunas"}
+                    {(data.statusPembayaran === 0 && "Belum Konfirmasi") ||
+                      (data.statusPembayaran === 1 && " COD") ||
+                      (data.statusPembayaran === 2 && "Lunas")}
                   </td>
                   <td>
-                    <div>
+                    <div className="d-flex flex-column align-items-stretch gap-1 ">
                       <button
                         type="button"
                         class="btn btn-info"
@@ -198,6 +258,15 @@ const ListPemesan = () => {
                       >
                         edit
                       </button>
+                      <button
+                        className="btn btn-info"
+                        data-bs-toggle="modal"
+                        data-bs-target={`#detail${data.id}`}
+                      >
+                        Detail
+                      </button>
+                    </div>
+                    <div>
                       <div
                         className="modal fade"
                         id={data.id}
@@ -226,10 +295,33 @@ const ListPemesan = () => {
                                 <input
                                   className="form-check-input"
                                   type="checkbox"
+                                  checked={cod}
+                                  disabled={
+                                    sudahSampai === true ||
+                                    data.statusPembayaran !== 0 ||
+                                    statusPembayaran === true
+                                  }
+                                  onChange={(e) => {
+                                    setCod(e.target.checked);
+                                  }}
+                                  id={`cod${data.id}`}
+                                />
+                                <label
+                                  className="form-check-label"
+                                  for={`cod${data.id}`}
+                                >
+                                  megubah ke "Cod"
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
                                   checked={statusPembayaran}
                                   disabled={sudahSampai === true}
                                   onChange={(e) => {
                                     setStatusPembayaran(e.target.checked);
+                                    setCod(false);
                                   }}
                                   id={`pembayaran${data.id}`}
                                 />
@@ -238,7 +330,7 @@ const ListPemesan = () => {
                                   for={`pembayaran${data.id}`}
                                 >
                                   Mengubah Status Pembayaran "
-                                  {data.statusPembayaran
+                                  {data.statusPembayaran === 2
                                     ? "Belum Lunas"
                                     : "Lunas"}
                                   "
@@ -250,10 +342,14 @@ const ListPemesan = () => {
                                   type="checkbox"
                                   checked={sudahSampai}
                                   onChange={(e) => {
-                                    if (data.statusPembayaran === 0) {
+                                    if (
+                                      data.statusPembayaran === 0 ||
+                                      data.statusPembayaran === 1
+                                    ) {
                                       setStatusPembayaran(e.target.checked);
                                     }
                                     setSudahSampai(e.target.checked);
+                                    setCod(false);
                                   }}
                                   id={`sudahsampai${data.id}`}
                                 />
@@ -314,15 +410,6 @@ const ListPemesan = () => {
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div>
-                      <button
-                        className="btn btn-info"
-                        data-bs-toggle="modal"
-                        data-bs-target={`#detail${data.id}`}
-                      >
-                        Detail
-                      </button>
                       <div
                         className="modal fade"
                         id={`detail${data.id}`}

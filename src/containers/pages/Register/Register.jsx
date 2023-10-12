@@ -102,7 +102,7 @@ const Register = () => {
                 />
               </div>
             </div>
-            <div className="col-md-6"></div>
+
             <div className="col-md-6">
               <div className="mb-2">
                 <label className="form-label">Password</label>
