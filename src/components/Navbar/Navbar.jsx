@@ -129,7 +129,7 @@ const Navbar = (porps) => {
                 Log Out <TbLogout />
               </button>
             ) : (
-              <NavLink to="/login" className="btn btn-outline-light">
+              <NavLink to="/login" className="btn btn-light">
                 Login
               </NavLink>
             )}
