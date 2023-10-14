@@ -61,7 +61,6 @@ const Register = () => {
     } catch (error) {
       setError(error.message);
       console.error("Registrasi gagal:", error);
-      toast.error("Registrasi gagal");
     }
   };
 
