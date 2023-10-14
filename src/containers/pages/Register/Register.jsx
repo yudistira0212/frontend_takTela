@@ -60,7 +60,7 @@ const Register = () => {
       toast.success("Registrasi berhasil");
     } catch (error) {
       setError(error.message);
-      console.error("Registrasi gagal:", error);
+      // console.error("Registrasi gagal:", error);
       // toast.error("Registrasi gagal");
     }
   };
