@@ -48,20 +48,20 @@ const Register = () => {
         displayName: username,
       });
 
-      // Simpan data tambahan (username dan nomor HP) ke database
-      const db = getDatabase();
-      const userRef = ref(db, `users/${user.uid}`);
-      const userData = {
-        role: user,
-      };
-      await set(userRef, userData);
+      // const db = getDatabase();
+      // const userRef = ref(db, `users/${user.uid}`);
+      // const userData = {
+      //   // role: user,
+      //   // role: user,
+      // };
+      // await set(userRef, userData);
 
       console.log("Registrasi berhasil:", user);
       toast.success("Registrasi berhasil");
     } catch (error) {
       setError(error.message);
-      // console.error("Registrasi gagal:", error);
-      // toast.error("Registrasi gagal");
+      console.error("Registrasi gagal:", error);
+      toast.error("Registrasi gagal");
     }
   };
 
