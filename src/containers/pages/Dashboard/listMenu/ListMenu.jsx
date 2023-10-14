@@ -245,103 +245,107 @@ const ListMenu = () => {
           </div>
         </form>
       </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">No</th>
-            <th scope="col">Nama</th>
-            <th scope="col">Harga</th>
-            <th scope="col">Stok</th>
-            <th scope="col">Variant</th>
-            <th scope="col">Image</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataMenu.map((data, i) => (
-            <tr key={data.id}>
-              <th scope="row"> {i + 1} </th>
-              <th> {data.nama} </th>
-              <td>{formatToIDR(data.harga)}</td>
-              <td>{data.stok}</td>
-              <td>{data.variant}</td>
-              <td>
-                <img src={data.imageUrl} alt="" width={100} />
-              </td>
-              <td>
-                <button
-                  className="btn btn-info"
-                  onClick={() => {
-                    handleEdit(
-                      data.nama,
-                      data.harga,
-                      data.stok,
-                      data.id,
-                      data.variant
-                    );
-                  }}
-                >
-                  edit
-                </button>
-                <button
-                  className="btn btn-danger"
-                  data-bs-toggle="modal"
-                  data-bs-target={`#konfir${data.id}`}
-                >
-                  delete
-                </button>
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">No</th>
+              <th scope="col">Nama</th>
+              <th scope="col">Harga</th>
+              <th scope="col">Stok</th>
+              <th scope="col">Variant</th>
+              <th scope="col">Image</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dataMenu.map((data, i) => (
+              <tr key={data.id}>
+                <th scope="row"> {i + 1} </th>
+                <th> {data.nama} </th>
+                <td>{formatToIDR(data.harga)}</td>
+                <td>{data.stok}</td>
+                <td>{data.variant}</td>
+                <td>
+                  <img src={data.imageUrl} alt="" width={100} />
+                </td>
+                <td>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => {
+                      handleEdit(
+                        data.nama,
+                        data.harga,
+                        data.stok,
+                        data.id,
+                        data.variant
+                      );
+                    }}
+                  >
+                    edit
+                  </button>
+                  <button
+                    className="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target={`#konfir${data.id}`}
+                  >
+                    delete
+                  </button>
 
-                <div
-                  className="modal fade"
-                  id={`konfir${data.id}`}
-                  tabindex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h1
-                          className="modal-title fs-5"
-                          id={`konfir${data.id}`}
-                        >
-                          Konfirmasi
-                        </h1>
-                        <button
-                          type="button"
-                          className="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
-                      </div>
-                      <div className="modal-body">
-                        ingin Menghapus data menu tersebut??
-                      </div>
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          tidak
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          data-bs-dismiss="modal"
-                          onClick={() => handleDelete(data.id, data.namaImage)}
-                        >
-                          Ya
-                        </button>
+                  <div
+                    className="modal fade"
+                    id={`konfir${data.id}`}
+                    tabindex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div className="modal-dialog modal-dialog-centered">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h1
+                            className="modal-title fs-5"
+                            id={`konfir${data.id}`}
+                          >
+                            Konfirmasi
+                          </h1>
+                          <button
+                            type="button"
+                            className="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                          ></button>
+                        </div>
+                        <div className="modal-body">
+                          ingin Menghapus data menu tersebut??
+                        </div>
+                        <div className="modal-footer">
+                          <button
+                            type="button"
+                            className="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                          >
+                            tidak
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-bs-dismiss="modal"
+                            onClick={() =>
+                              handleDelete(data.id, data.namaImage)
+                            }
+                          >
+                            Ya
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Dashboard>
   );
 };

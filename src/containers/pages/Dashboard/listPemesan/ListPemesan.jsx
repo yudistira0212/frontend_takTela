@@ -157,403 +157,411 @@ const ListPemesan = () => {
             <option value="4">Lunas</option>
           </select>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">No</th>
-              <th scope="col">Email</th>
-              <th
-                scope="col"
-                onClick={() => handleSort("waktuPesan")}
-                style={{ cursor: "pointer" }}
-              >
-                Waktu
-                {sortColumn === "waktuPesan" && (
-                  <span className="ml-2">
-                    {sortOrder === "asc" ? <BsArrowUp /> : <BsArrowDown />}
-                  </span>
-                )}
-              </th>
-              {/* ... Sisipkan header untuk kolom lain jika diperlukan */}
-              <th scope="col">KodePembeli</th>
-              <th scope="col">Alamat</th>
-              <th scope="col">Telpon</th>
-              <th scope="col">Total Harga</th>
-              <th scope="col">Status</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataRiwayat
-              .sort((a, b) => {
-                const dateA = new Date(a[sortColumn]);
-                const dateB = new Date(b[sortColumn]);
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">No</th>
+                <th scope="col">Email</th>
+                <th
+                  scope="col"
+                  onClick={() => handleSort("waktuPesan")}
+                  style={{ cursor: "pointer" }}
+                >
+                  Waktu
+                  {sortColumn === "waktuPesan" && (
+                    <span className="ml-2">
+                      {sortOrder === "asc" ? <BsArrowUp /> : <BsArrowDown />}
+                    </span>
+                  )}
+                </th>
+                {/* ... Sisipkan header untuk kolom lain jika diperlukan */}
+                <th scope="col">KodePembeli</th>
+                <th scope="col">Alamat</th>
+                <th scope="col">Telpon</th>
+                <th scope="col">Total Harga</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataRiwayat
+                .sort((a, b) => {
+                  const dateA = new Date(a[sortColumn]);
+                  const dateB = new Date(b[sortColumn]);
 
-                if (sortOrder === "asc") {
-                  return dateA - dateB;
-                } else {
-                  return dateB - dateA;
-                }
-              })
-              .filter((data) => {
-                if (filter === "") {
-                  return true;
-                } else if (filter === "1") {
-                  return data.statusPembayaran >= 1;
-                } else if (filter === "2") {
-                  return data.statusPembayaran === 0;
-                } else if (filter === "3") {
-                  return data.statusPembayaran === 1;
-                } else {
-                  return data.statusPembayaran === 2;
-                }
-              })
-              .filter((data) => {
-                const lowerCaseKeyword = searchKeyword.toLowerCase();
-                return (
-                  data.email.toLowerCase().includes(lowerCaseKeyword) ||
-                  formatTanggal(data.waktuPesan)
-                    .toLowerCase()
-                    .includes(lowerCaseKeyword) ||
-                  formatJam(data.waktuPesan)
-                    .toLowerCase()
-                    .includes(lowerCaseKeyword) ||
-                  data.code.toLowerCase().includes(lowerCaseKeyword) ||
-                  data.alamat.toLowerCase().includes(lowerCaseKeyword) ||
-                  data.noHp.toLowerCase().includes(lowerCaseKeyword)
-                );
-              })
-              .map((data, i) => (
-                <tr key={data.id}>
-                  <th scope="row"> {i + 1} </th>
-                  <th> {data.email} </th>
-                  <td>
-                    {" "}
-                    {formatTanggal(data.waktuPesan)}{" "}
-                    {formatJam(data.waktuPesan)}{" "}
-                  </td>
-                  <td>{data.code}</td>
-                  <td>{data.alamat}</td>
-                  <td>{data.noHp}</td>
-                  <td>{formatToIDR(data.totalHarga)}</td>
-                  <td
-                    className={
-                      (data.statusPembayaran === 0 && "bg-danger fw-bold") ||
-                      (data.statusPembayaran === 1 &&
-                        " bg-secondary fw-bold") ||
-                      (data.statusPembayaran === 2 && "bg-success fw-bold")
-                    }
-                  >
-                    {(data.statusPembayaran === 0 && "Belum Konfirmasi") ||
-                      (data.statusPembayaran === 1 && " COD") ||
-                      (data.statusPembayaran === 2 && "Lunas")}
-                  </td>
-                  <td>
-                    <div className="d-flex flex-column align-items-stretch gap-1 ">
-                      <button
-                        type="button"
-                        class="btn btn-info"
-                        data-bs-toggle="modal"
-                        data-bs-target={`#${data.id}`}
-                      >
-                        edit
-                      </button>
-                      <button
-                        className="btn btn-info"
-                        data-bs-toggle="modal"
-                        data-bs-target={`#detail${data.id}`}
-                      >
-                        Detail
-                      </button>
-                    </div>
-                    <div>
-                      <div
-                        className="modal fade"
-                        id={data.id}
-                        tabindex="-1"
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div className="modal-dialog">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h1
-                                className="modal-title fs-5"
-                                id={`modal${data.id}`}
-                              >
-                                Edit Riwayat
-                              </h1>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div className="modal-body">
-                              <div class="form-check">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  checked={cod}
-                                  disabled={
-                                    sudahSampai === true ||
-                                    data.statusPembayaran !== 0 ||
-                                    statusPembayaran === true
-                                  }
-                                  onChange={(e) => {
-                                    setCod(e.target.checked);
-                                  }}
-                                  id={`cod${data.id}`}
-                                />
-                                <label
-                                  className="form-check-label"
-                                  for={`cod${data.id}`}
+                  if (sortOrder === "asc") {
+                    return dateA - dateB;
+                  } else {
+                    return dateB - dateA;
+                  }
+                })
+                .filter((data) => {
+                  if (filter === "") {
+                    return true;
+                  } else if (filter === "1") {
+                    return data.statusPembayaran >= 1;
+                  } else if (filter === "2") {
+                    return data.statusPembayaran === 0;
+                  } else if (filter === "3") {
+                    return data.statusPembayaran === 1;
+                  } else {
+                    return data.statusPembayaran === 2;
+                  }
+                })
+                .filter((data) => {
+                  const lowerCaseKeyword = searchKeyword.toLowerCase();
+                  return (
+                    data.email.toLowerCase().includes(lowerCaseKeyword) ||
+                    formatTanggal(data.waktuPesan)
+                      .toLowerCase()
+                      .includes(lowerCaseKeyword) ||
+                    formatJam(data.waktuPesan)
+                      .toLowerCase()
+                      .includes(lowerCaseKeyword) ||
+                    data.code.toLowerCase().includes(lowerCaseKeyword) ||
+                    data.alamat.toLowerCase().includes(lowerCaseKeyword) ||
+                    data.noHp.toLowerCase().includes(lowerCaseKeyword)
+                  );
+                })
+                .map((data, i) => (
+                  <tr key={data.id}>
+                    <th scope="row"> {i + 1} </th>
+                    <th> {data.email} </th>
+                    <td>
+                      {" "}
+                      {formatTanggal(data.waktuPesan)}{" "}
+                      {formatJam(data.waktuPesan)}{" "}
+                    </td>
+                    <td>{data.code}</td>
+                    <td>{data.alamat}</td>
+                    <td>{data.noHp}</td>
+                    <td>{formatToIDR(data.totalHarga)}</td>
+                    <td
+                      className={
+                        (data.statusPembayaran === 0 && "bg-danger fw-bold") ||
+                        (data.statusPembayaran === 1 &&
+                          " bg-secondary fw-bold") ||
+                        (data.statusPembayaran === 2 && "bg-success fw-bold")
+                      }
+                    >
+                      {(data.statusPembayaran === 0 && "Belum Konfirmasi") ||
+                        (data.statusPembayaran === 1 && " COD") ||
+                        (data.statusPembayaran === 2 && "Lunas")}
+                    </td>
+                    <td>
+                      <div className="d-flex flex-column align-items-stretch gap-1 ">
+                        <button
+                          type="button"
+                          class="btn btn-info"
+                          data-bs-toggle="modal"
+                          data-bs-target={`#${data.id}`}
+                        >
+                          edit
+                        </button>
+                        <button
+                          className="btn btn-info"
+                          data-bs-toggle="modal"
+                          data-bs-target={`#detail${data.id}`}
+                        >
+                          Detail
+                        </button>
+                      </div>
+                      <div>
+                        <div
+                          className="modal fade"
+                          id={data.id}
+                          tabindex="-1"
+                          aria-labelledby="exampleModalLabel"
+                          aria-hidden="true"
+                        >
+                          <div className="modal-dialog">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <h1
+                                  className="modal-title fs-5"
+                                  id={`modal${data.id}`}
                                 >
-                                  megubah ke "Cod"
-                                </label>
+                                  Edit Riwayat
+                                </h1>
+                                <button
+                                  type="button"
+                                  className="btn-close"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                ></button>
                               </div>
-                              <div class="form-check">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  checked={statusPembayaran}
-                                  disabled={sudahSampai === true}
-                                  onChange={(e) => {
-                                    setStatusPembayaran(e.target.checked);
-                                    setCod(false);
-                                  }}
-                                  id={`pembayaran${data.id}`}
-                                />
-                                <label
-                                  className="form-check-label"
-                                  for={`pembayaran${data.id}`}
-                                >
-                                  Mengubah Status Pembayaran "
-                                  {data.statusPembayaran === 2
-                                    ? "Belum Lunas"
-                                    : "Lunas"}
-                                  "
-                                </label>
-                              </div>
-                              <div className="form-check">
-                                <input
-                                  className="form-check-input"
-                                  type="checkbox"
-                                  checked={sudahSampai}
-                                  onChange={(e) => {
-                                    if (
-                                      data.statusPembayaran === 0 ||
-                                      data.statusPembayaran === 1
-                                    ) {
-                                      setStatusPembayaran(e.target.checked);
+                              <div className="modal-body">
+                                <div class="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={cod}
+                                    disabled={
+                                      sudahSampai === true ||
+                                      data.statusPembayaran !== 0 ||
+                                      statusPembayaran === true
                                     }
-                                    setSudahSampai(e.target.checked);
-                                    setCod(false);
-                                  }}
-                                  id={`sudahsampai${data.id}`}
-                                />
-                                <label
-                                  className="form-check-label"
-                                  for={`sudahsampai${data.id}`}
-                                >
-                                  Pesanan Sudah Sampai
-                                </label>
+                                    onChange={(e) => {
+                                      setCod(e.target.checked);
+                                    }}
+                                    id={`cod${data.id}`}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    for={`cod${data.id}`}
+                                  >
+                                    megubah ke "Cod"
+                                  </label>
+                                </div>
+                                <div class="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={statusPembayaran}
+                                    disabled={sudahSampai === true}
+                                    onChange={(e) => {
+                                      setStatusPembayaran(e.target.checked);
+                                      setCod(false);
+                                    }}
+                                    id={`pembayaran${data.id}`}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    for={`pembayaran${data.id}`}
+                                  >
+                                    Mengubah Status Pembayaran "
+                                    {data.statusPembayaran === 2
+                                      ? "Belum Lunas"
+                                      : "Lunas"}
+                                    "
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={sudahSampai}
+                                    onChange={(e) => {
+                                      if (
+                                        data.statusPembayaran === 0 ||
+                                        data.statusPembayaran === 1
+                                      ) {
+                                        setStatusPembayaran(e.target.checked);
+                                      }
+                                      setSudahSampai(e.target.checked);
+                                      setCod(false);
+                                    }}
+                                    id={`sudahsampai${data.id}`}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    for={`sudahsampai${data.id}`}
+                                  >
+                                    Pesanan Sudah Sampai
+                                  </label>
+                                </div>
+                                <div>
+                                  <label
+                                    className="form-check-label"
+                                    for="flexSwitchCheckChecked"
+                                    style={{ fontWeight: "bold" }}
+                                  >
+                                    Ketik "konfirmasi"
+                                  </label>
+                                  <input
+                                    className=" form-control "
+                                    type="text"
+                                    placeholder='"konfirmasi"'
+                                    value={konfir}
+                                    id={data.id}
+                                    onChange={(e) => {
+                                      setKonfir(e.target.value);
+                                    }}
+                                  />
+                                </div>
                               </div>
-                              <div>
-                                <label
-                                  className="form-check-label"
-                                  for="flexSwitchCheckChecked"
-                                  style={{ fontWeight: "bold" }}
+                              <div className="modal-footer">
+                                <button
+                                  type="button"
+                                  className="btn btn-secondary"
+                                  data-bs-dismiss="modal"
                                 >
-                                  Ketik "konfirmasi"
-                                </label>
-                                <input
-                                  className=" form-control "
-                                  type="text"
-                                  placeholder='"konfirmasi"'
-                                  value={konfir}
-                                  id={data.id}
-                                  onChange={(e) => {
-                                    setKonfir(e.target.value);
+                                  Close
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn btn-primary"
+                                  data-bs-dismiss="modal"
+                                  onClick={() => {
+                                    if (konfir === "konfirmasi") {
+                                      handleConfirm(
+                                        data.id,
+                                        data.statusPembayaran
+                                      );
+                                      setKonfir("");
+                                      setStatusPembayaran(false);
+                                      setSudahSampai(false);
+                                    }
                                   }}
-                                />
+                                >
+                                  Save changes
+                                </button>
                               </div>
-                            </div>
-                            <div className="modal-footer">
-                              <button
-                                type="button"
-                                className="btn btn-secondary"
-                                data-bs-dismiss="modal"
-                              >
-                                Close
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                onClick={() => {
-                                  if (konfir === "konfirmasi") {
-                                    handleConfirm(
-                                      data.id,
-                                      data.statusPembayaran
-                                    );
-                                    setKonfir("");
-                                    setStatusPembayaran(false);
-                                    setSudahSampai(false);
-                                  }
-                                }}
-                              >
-                                Save changes
-                              </button>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div
-                        className="modal fade"
-                        id={`detail${data.id}`}
-                        tabindex="-1"
-                        aria-labelledby="exampleModalLabel"
-                        aria-hidden="true"
-                      >
-                        <div className="modal-dialog modal-dialog-centered">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h1
-                                className="modal-title fs-5"
-                                id={`konfir${data.id}`}
-                              >
-                                Detail Pesanan
-                              </h1>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div className="modal-body">
-                              <div
-                                className="container  my-3 p-2 shadow-sm rounded-3 bg-body-tertiary"
-                                style={{ maxWidth: "500px" }}
-                              >
-                                <div className="d-flex">
-                                  <div className=" fw-bold">
-                                    <div>Tanggal</div>
-                                    <div>Jam</div>
-                                    <div>Kode Pembelian </div>
-                                  </div>
-                                  <div className="fw-bold mx-1">
-                                    <div>:</div>
-                                    <div>:</div>
-                                    <div>:</div>
-                                  </div>
-                                  <div>
-                                    <div>{formatTanggal(data.waktuPesan)}</div>
-                                    <div>{formatJam(data.waktuPesan)}</div>
-                                    <div>
-                                      {" "}
-                                      {data.code}{" "}
-                                      <CopyToClipboard
-                                        text={data.code}
-                                        onCopy={() => {
-                                          toast.success("Terkopi!", {
-                                            position: toast.POSITION.TOP_RIGHT,
-                                            autoClose: 2000,
-                                          });
-                                        }}
-                                      >
-                                        <button className=" btn btn-light">
-                                          <BiSolidCopyAlt />
-                                        </button>
-                                      </CopyToClipboard>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="border-top">
-                                  {data.pesanan.map((value) => (
-                                    <div key={value.id} className="my-2">
-                                      <div>
-                                        {value.nama} {value.variant}
-                                      </div>
-                                      <div className="d-flex justify-content-between  container-fluid">
-                                        <div>
-                                          {value.pesanan} X{" "}
-                                          {formatToIDR(value.harga)}
-                                        </div>
-                                        <div>
-                                          {" "}
-                                          {formatToIDR(value.totalHargaPesanan)}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                                <div className="border-top ">
+                        <div
+                          className="modal fade"
+                          id={`detail${data.id}`}
+                          tabindex="-1"
+                          aria-labelledby="exampleModalLabel"
+                          aria-hidden="true"
+                        >
+                          <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content">
+                              <div className="modal-header">
+                                <h1
+                                  className="modal-title fs-5"
+                                  id={`konfir${data.id}`}
+                                >
+                                  Detail Pesanan
+                                </h1>
+                                <button
+                                  type="button"
+                                  className="btn-close"
+                                  data-bs-dismiss="modal"
+                                  aria-label="Close"
+                                ></button>
+                              </div>
+                              <div className="modal-body">
+                                <div
+                                  className="container  my-3 p-2 shadow-sm rounded-3 bg-body-tertiary"
+                                  style={{ maxWidth: "500px" }}
+                                >
                                   <div className="d-flex">
-                                    <div className="fw-bold">
-                                      <div> Alamat </div>
-                                      <div> Total </div>
-                                      <div> Status </div>
+                                    <div className=" fw-bold">
+                                      <div>Tanggal</div>
+                                      <div>Jam</div>
+                                      <div>Kode Pembelian </div>
                                     </div>
                                     <div className="fw-bold mx-1">
                                       <div>:</div>
                                       <div>:</div>
                                       <div>:</div>
                                     </div>
-                                    <div className="">
-                                      <div>{data.alamat}</div>
+                                    <div>
+                                      <div>
+                                        {formatTanggal(data.waktuPesan)}
+                                      </div>
+                                      <div>{formatJam(data.waktuPesan)}</div>
                                       <div>
                                         {" "}
-                                        {formatToIDR(data.totalHarga)}{" "}
+                                        {data.code}{" "}
+                                        <CopyToClipboard
+                                          text={data.code}
+                                          onCopy={() => {
+                                            toast.success("Terkopi!", {
+                                              position:
+                                                toast.POSITION.TOP_RIGHT,
+                                              autoClose: 2000,
+                                            });
+                                          }}
+                                        >
+                                          <button className=" btn btn-light">
+                                            <BiSolidCopyAlt />
+                                          </button>
+                                        </CopyToClipboard>
                                       </div>
-
-                                      {data.flag === 0 ? (
-                                        data.statusPembayaran ? (
-                                          <div className="text-success">
-                                            Dalam Proses
-                                          </div>
-                                        ) : (
-                                          <div className="text-danger">
-                                            Belum Lunas
-                                          </div>
-                                        )
-                                      ) : (
-                                        <div className="text-primary">
-                                          Telah diterima
-                                        </div>
-                                      )}
                                     </div>
                                   </div>
+                                  <div className="border-top">
+                                    {data.pesanan.map((value) => (
+                                      <div key={value.id} className="my-2">
+                                        <div>
+                                          {value.nama} {value.variant}
+                                        </div>
+                                        <div className="d-flex justify-content-between  container-fluid">
+                                          <div>
+                                            {value.pesanan} X{" "}
+                                            {formatToIDR(value.harga)}
+                                          </div>
+                                          <div>
+                                            {" "}
+                                            {formatToIDR(
+                                              value.totalHargaPesanan
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div className="border-top ">
+                                    <div className="d-flex">
+                                      <div className="fw-bold">
+                                        <div> Alamat </div>
+                                        <div> Total </div>
+                                        <div> Status </div>
+                                      </div>
+                                      <div className="fw-bold mx-1">
+                                        <div>:</div>
+                                        <div>:</div>
+                                        <div>:</div>
+                                      </div>
+                                      <div className="">
+                                        <div>{data.alamat}</div>
+                                        <div>
+                                          {" "}
+                                          {formatToIDR(data.totalHarga)}{" "}
+                                        </div>
 
-                                  <div>
-                                    Total Harga : {formatToIDR(data.totalHarga)}{" "}
+                                        {data.flag === 0 ? (
+                                          data.statusPembayaran ? (
+                                            <div className="text-success">
+                                              Dalam Proses
+                                            </div>
+                                          ) : (
+                                            <div className="text-danger">
+                                              Belum Lunas
+                                            </div>
+                                          )
+                                        ) : (
+                                          <div className="text-primary">
+                                            Telah diterima
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    <div>
+                                      Total Harga :{" "}
+                                      {formatToIDR(data.totalHarga)}{" "}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="modal-footer">
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                data-bs-dismiss="modal"
-                                // onClick={() =>
-                                // handleDelete(data.id, data.namaImage)
-                                // }
-                              >
-                                Oke
-                              </button>
+                              <div className="modal-footer">
+                                <button
+                                  type="button"
+                                  className="btn btn-primary"
+                                  data-bs-dismiss="modal"
+                                  // onClick={() =>
+                                  // handleDelete(data.id, data.namaImage)
+                                  // }
+                                >
+                                  Oke
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </Dashboard>
   );

@@ -104,58 +104,60 @@ const RiwayatPemesan = () => {
           />
         </div>
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">No</th>
-              <th scope="col">Email</th>
-              <th scope="col">Waktu</th>
-              <th scope="col">KodePembeli</th>
-              <th scope="col">Alamat</th>
-              <th scope="col">Telpon</th>
-              <th scope="col">Total Harga</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dataRiwayat
-              .filter((data) => {
-                // Filter data berdasarkan kata kunci pencarian
-                const lowerCaseKeyword = searchKeyword.toLowerCase();
-                return (
-                  data.email.toLowerCase().includes(lowerCaseKeyword) ||
-                  formatTanggal(data.waktuPesan)
-                    .toLowerCase()
-                    .includes(lowerCaseKeyword) ||
-                  formatJam(data.waktuPesan)
-                    .toLowerCase()
-                    .includes(lowerCaseKeyword) ||
-                  data.code.toLowerCase().includes(lowerCaseKeyword) ||
-                  data.alamat.toLowerCase().includes(lowerCaseKeyword) ||
-                  data.noHp.toLowerCase().includes(lowerCaseKeyword)
-                );
-              })
-              .map((data, i) => (
-                <tr key={data.id}>
-                  <th scope="row"> {i + 1} </th>
-                  <th> {data.email} </th>
-                  <td>
-                    {" "}
-                    {formatTanggal(data.waktuPesan)}{" "}
-                    {formatJam(data.waktuPesan)}{" "}
-                  </td>
-                  <td>{data.code}</td>
-                  <td>{data.alamat}</td>
-                  <td>{data.noHp}</td>
-                  <td>{formatToIDR(data.totalHarga)}</td>
-                  <td className={data.statusPembayaran === 2 && "bg-success"}>
-                    {data.statusPembayaran === 2 && "Lunas"}
-                  </td>
-                  <td></td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <div className="table-responsive">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">No</th>
+                <th scope="col">Email</th>
+                <th scope="col">Waktu</th>
+                <th scope="col">KodePembeli</th>
+                <th scope="col">Alamat</th>
+                <th scope="col">Telpon</th>
+                <th scope="col">Total Harga</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataRiwayat
+                .filter((data) => {
+                  // Filter data berdasarkan kata kunci pencarian
+                  const lowerCaseKeyword = searchKeyword.toLowerCase();
+                  return (
+                    data.email.toLowerCase().includes(lowerCaseKeyword) ||
+                    formatTanggal(data.waktuPesan)
+                      .toLowerCase()
+                      .includes(lowerCaseKeyword) ||
+                    formatJam(data.waktuPesan)
+                      .toLowerCase()
+                      .includes(lowerCaseKeyword) ||
+                    data.code.toLowerCase().includes(lowerCaseKeyword) ||
+                    data.alamat.toLowerCase().includes(lowerCaseKeyword) ||
+                    data.noHp.toLowerCase().includes(lowerCaseKeyword)
+                  );
+                })
+                .map((data, i) => (
+                  <tr key={data.id}>
+                    <th scope="row"> {i + 1} </th>
+                    <th> {data.email} </th>
+                    <td>
+                      {" "}
+                      {formatTanggal(data.waktuPesan)}{" "}
+                      {formatJam(data.waktuPesan)}{" "}
+                    </td>
+                    <td>{data.code}</td>
+                    <td>{data.alamat}</td>
+                    <td>{data.noHp}</td>
+                    <td>{formatToIDR(data.totalHarga)}</td>
+                    <td className={data.statusPembayaran === 2 && "bg-success"}>
+                      {data.statusPembayaran === 2 && "Lunas"}
+                    </td>
+                    <td></td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </Dashboard>
   );
