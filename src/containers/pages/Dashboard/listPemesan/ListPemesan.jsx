@@ -179,6 +179,7 @@ const ListPemesan = () => {
                 <th scope="col">KodePembeli</th>
                 <th scope="col">Alamat</th>
                 <th scope="col">Telpon</th>
+                <th scope="col">Pesanan</th>
                 <th scope="col">Total Harga</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -236,6 +237,17 @@ const ListPemesan = () => {
                     <td>{data.code}</td>
                     <td>{data.alamat}</td>
                     <td>{data.noHp}</td>
+                    <td>
+                      {data.pesanan.map((value) => (
+                        <div>
+                          <div>{value.nama} </div>
+                          <div>{value.variant} </div>
+                          <div className=" border-bottom-5">
+                            X{value.pesanan}
+                          </div>
+                        </div>
+                      ))}
+                    </td>
                     <td>{formatToIDR(data.totalHarga)}</td>
                     <td
                       className={
