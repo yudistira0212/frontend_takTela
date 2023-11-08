@@ -9,7 +9,7 @@ const Navbar = (porps) => {
   const [admin, setAdmin] = useState();
   const [email, setEmail] = useState();
   const [userName, setUserName] = useState();
-
+  const phoneNumber = process.env.REACT_APP_hpAdmin;
   const database = getDatabase();
 
   const auth = getAuth();
@@ -99,7 +99,7 @@ const Navbar = (porps) => {
                     const message = `Halo min Saya ${
                       !userName ? "" : userName
                     } ingin bertanya terkait produk anda,`;
-                    const phoneNumber = process.env.REACT_APP_hpAdmin;
+
                     const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                       message
                     )}`;

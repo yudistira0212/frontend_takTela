@@ -13,6 +13,7 @@ const Terimakasih = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const database = getDatabase();
+  const phoneNumber = process.env.REACT_APP_hpAdmin2;
 
   useEffect(() => {
     fetchData();
@@ -168,8 +169,7 @@ const Terimakasih = () => {
                           onClick={() => {
                             const openWhatsApp = () => {
                               const message = `Halo min Saya ingin melakukan konfirmasi pesanan saya,\nKode pemesanan saya: ${dataRiwayat.code}\nEmail saya: ${dataRiwayat.email}`;
-                              const phoneNumber =
-                                process.env.REACT_APP_hpAdmin2;
+
                               const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                                 message
                               )}`;
