@@ -96,8 +96,10 @@ const Navbar = (porps) => {
                 className="nav-link  btn mx-2 btn-light"
                 onClick={() => {
                   const openWhatsApp = () => {
-                    const message = `Halo min Saya ${userName} ingin bertanya terkait produk anda,`;
-                    const phoneNumber = "+6282248250159";
+                    const message = `Halo min Saya ${
+                      !userName ? "" : userName
+                    } ingin bertanya terkait produk anda,`;
+                    const phoneNumber = process.env.REACT_APP_hpAdmin;
                     const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                       message
                     )}`;
@@ -129,9 +131,14 @@ const Navbar = (porps) => {
                 Log Out <TbLogout />
               </button>
             ) : (
-              <NavLink to="/login" className="btn btn-light">
-                Login
-              </NavLink>
+              <div>
+                <NavLink to="/login" className="btn btn-light">
+                  Login
+                </NavLink>
+                <NavLink to="/register" className="btn btn-light">
+                  Register
+                </NavLink>
+              </div>
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dashboard from "../Dashboard";
-import { getDatabase, onValue, ref, set } from "firebase/database";
+import { getDatabase, onValue, ref, remove, set } from "firebase/database";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { toast } from "react-toastify";
 import { BiSolidCopyAlt } from "react-icons/bi";
@@ -12,6 +12,7 @@ const ListPemesan = () => {
   const [statusPembayaran, setStatusPembayaran] = useState(false);
   const [sudahSampai, setSudahSampai] = useState(false);
   const [cod, setCod] = useState(false);
+  const [hapus, setHapus] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [sortColumn, setSortColumn] = useState("waktuPesan");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -28,16 +29,27 @@ const ListPemesan = () => {
     }
   };
 
-  const handleConfirm = (id, status) => {
+  const handleConfirm = async (id, status) => {
     let updatedStatusPembayaran = 0;
     let updateSampai = 0;
 
     const bayarRef = ref(database, `Riwayat Pesanan/${id}/statusPembayaran`);
     const flagRef = ref(database, `Riwayat Pesanan/${id}/flag`);
+    const hapusRef = ref(database, `Riwayat Pesanan/${id}`);
+
+    if (hapus === true) {
+      await remove(hapusRef)
+        .then(() => {
+          console.log("Data berhasil di hapus");
+        })
+        .catch((error) => {
+          console.error("Gagal menghapus:", error);
+        });
+    }
 
     if (cod === true) {
       updatedStatusPembayaran = 1;
-      set(bayarRef, updatedStatusPembayaran)
+      await set(bayarRef, updatedStatusPembayaran)
         .then(() => {
           console.log("Status pembayaran diperbarui.");
         })
@@ -53,7 +65,7 @@ const ListPemesan = () => {
         updatedStatusPembayaran = status === 1 ? 2 : 1;
       }
 
-      set(bayarRef, updatedStatusPembayaran)
+      await set(bayarRef, updatedStatusPembayaran)
         .then(() => {
           console.log("Status pembayaran diperbarui.");
         })
@@ -63,7 +75,7 @@ const ListPemesan = () => {
     }
     if (sudahSampai) {
       updateSampai = 1;
-      set(flagRef, updateSampai)
+      await set(flagRef, updateSampai)
         .then(() => {
           console.log("Status pembayaran diperbarui.");
         })
@@ -81,7 +93,7 @@ const ListPemesan = () => {
     try {
       const riwayatRef = ref(database, `Riwayat Pesanan`);
 
-      onValue(riwayatRef, (snapshot) => {
+      await onValue(riwayatRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
           const filteredData = Object.entries(data)
@@ -308,11 +320,35 @@ const ListPemesan = () => {
                                   <input
                                     className="form-check-input"
                                     type="checkbox"
+                                    checked={hapus}
+                                    disabled={
+                                      sudahSampai === true ||
+                                      // data.statusPembayaran !== 0 ||
+                                      statusPembayaran === true ||
+                                      cod === true
+                                    }
+                                    onChange={(e) => {
+                                      setHapus(e.target.checked);
+                                    }}
+                                    id={`hapus${data.id}`}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    for={`hapus${data.id}`}
+                                  >
+                                    Hapus Pesana
+                                  </label>
+                                </div>
+                                <div class="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="checkbox"
                                     checked={cod}
                                     disabled={
                                       sudahSampai === true ||
                                       data.statusPembayaran !== 0 ||
-                                      statusPembayaran === true
+                                      statusPembayaran === true ||
+                                      hapus === true
                                     }
                                     onChange={(e) => {
                                       setCod(e.target.checked);
@@ -331,7 +367,9 @@ const ListPemesan = () => {
                                     className="form-check-input"
                                     type="checkbox"
                                     checked={statusPembayaran}
-                                    disabled={sudahSampai === true}
+                                    disabled={
+                                      sudahSampai === true || hapus === true
+                                    }
                                     onChange={(e) => {
                                       setStatusPembayaran(e.target.checked);
                                       setCod(false);
@@ -354,6 +392,10 @@ const ListPemesan = () => {
                                     className="form-check-input"
                                     type="checkbox"
                                     checked={sudahSampai}
+                                    disabled={
+                                      data.statusPembayaran === 0 ||
+                                      hapus === true
+                                    }
                                     onChange={(e) => {
                                       if (
                                         data.statusPembayaran === 0 ||

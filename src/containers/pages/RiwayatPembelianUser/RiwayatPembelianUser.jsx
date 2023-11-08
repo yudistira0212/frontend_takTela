@@ -230,7 +230,8 @@ const RiwayatPembelianUser = () => {
                               onClick={() => {
                                 const openWhatsApp = () => {
                                   const message = `Halo min Saya ingin melakukan konfirmasi,\nKode pemesanan saya: ${data.code}\nEmail: ${data.email}`;
-                                  const phoneNumber = "+6282248250159";
+                                  const phoneNumber =
+                                    process.env.REACT_APP_hpAdmin2;
                                   const whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
                                     message
                                   )}`;
