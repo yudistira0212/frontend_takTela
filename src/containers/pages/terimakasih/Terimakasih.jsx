@@ -159,7 +159,7 @@ const Terimakasih = () => {
                     <div className="d-flex  justify-content-between align-items-stretch   ">
                       <div>
                         <div className=" fw-bold text-danger">
-                          !!Lakukan Konfirmasi Agar Pesana Diproses!!
+                          !Lakukan Konfirmasi Agar Pesana Diproses!
                         </div>
                       </div>
                       <div className=" d-flex flex-column mb-3 ">
